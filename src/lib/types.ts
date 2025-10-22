@@ -1,3 +1,4 @@
+
 import { z } from "zod";
 
 export const experienceSchema = z.object({
@@ -29,6 +30,7 @@ export const resumeSchema = z.object({
     email: z.string().email("Invalid email address"),
     phone: z.string().min(1, "Phone number is required"),
     linkedin: z.string().url("Invalid LinkedIn URL").optional().or(z.literal('')),
+    photo: z.string().optional(),
   }),
   summary: z.string().min(1, "Professional summary is required"),
   experience: z.array(experienceSchema),

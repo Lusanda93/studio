@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useFormContext } from "react-hook-form";
@@ -44,7 +45,7 @@ export function ResumePreview() {
   const selectedStyle = templateStyles[styling?.template] || templateStyles.Modern;
   const selectedFont = fontStyles[styling?.font] || fontStyles.Inter;
   
-  const profilePhoto = PlaceHolderImages.find(p => p.id === 'user-profile-placeholder');
+  const profilePhotoPlaceholder = PlaceHolderImages.find(p => p.id === 'user-profile-placeholder');
 
   const Section = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
     <div className="mb-6">
@@ -68,10 +69,10 @@ export function ResumePreview() {
                 {personal?.linkedin && <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:underline"><LinkedInIcon/> LinkedIn</a>}
              </div>
            </div>
-           {styling?.includePhoto && profilePhoto && (
+           {styling?.includePhoto && (
              <Avatar className="h-24 w-24">
-               <Image src={profilePhoto.imageUrl} alt="Profile Photo" width={96} height={96} data-ai-hint={profilePhoto.imageHint}/>
-               <AvatarFallback>{personal?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+                <AvatarImage src={personal.photo || profilePhotoPlaceholder?.imageUrl} alt="Profile Photo" />
+                <AvatarFallback>{personal?.fullName?.charAt(0) || 'U'}</AvatarFallback>
              </Avatar>
            )}
         </header>

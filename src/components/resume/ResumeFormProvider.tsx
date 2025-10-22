@@ -1,3 +1,4 @@
+
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -14,6 +15,7 @@ export function ResumeFormProvider({ children }: { children: React.ReactNode }) 
         email: "",
         phone: "",
         linkedin: "",
+        photo: "",
       },
       summary: "",
       experience: [],
