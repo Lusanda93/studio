@@ -29,6 +29,7 @@ import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import React, { useRef, useState } from "react";
 import { CameraDialog } from "../CameraDialog";
+import { cn } from "@/lib/utils";
 
 const colorSchemes = [
   { name: "Purple", value: "#5E548E" },
@@ -174,7 +175,14 @@ export function StylingSection() {
               </FormItem>
             )}
           />
-          {includePhoto && (
+          <div
+            className={cn(
+              "transition-all duration-300 ease-in-out overflow-hidden",
+              includePhoto
+                ? "max-h-40 opacity-100"
+                : "max-h-0 opacity-0"
+            )}
+          >
              <div className="p-4 border rounded-lg space-y-4">
                 <FormLabel>Profile Photo</FormLabel>
                 <div className="flex gap-4">
@@ -198,7 +206,7 @@ export function StylingSection() {
                   </Button>
                 </div>
              </div>
-          )}
+          </div>
         </CardContent>
       </Card>
       <CameraDialog isOpen={isCameraDialogOpen} onOpenChange={setCameraDialogOpen} onPhotoSelect={handlePhotoSelect} />
