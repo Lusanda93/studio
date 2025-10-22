@@ -21,6 +21,7 @@ export function ResumeFormProvider({ children }: { children: React.ReactNode }) 
       skills: "",
       certifications: [],
       projects: [],
+      coverLetter: "",
       styling: {
         template: "Modern",
         font: "Inter",

@@ -36,6 +36,7 @@ export const resumeSchema = z.object({
   skills: z.string().min(1, "Please list at least one skill"),
   certifications: z.array(extrasSchema),
   projects: z.array(extrasSchema),
+  coverLetter: z.string().optional(),
   styling: z.object({
     template: z.enum(["Classic", "Modern", "Creative", "Minimalist"]).default("Modern"),
     font: z.enum(["Inter", "Serif", "Mono"]).default("Inter"),

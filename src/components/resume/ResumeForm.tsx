@@ -9,8 +9,14 @@ import { ExtrasSection } from "./form-sections/ExtrasSection";
 import { StylingSection } from "./form-sections/StylingSection";
 import { AiToolsSection } from "./form-sections/AiToolsSection";
 import { FinalizeSection } from "./form-sections/FinalizeSection";
+import { CoverLetterSection } from "./form-sections/CoverLetterSection";
+import { useFormContext } from "react-hook-form";
+import { ResumeSchema } from "@/lib/types";
 
 export function ResumeForm() {
+  const { watch } = useFormContext<ResumeSchema>();
+  const showCoverLetter = watch("meta.generateCoverLetter");
+
   return (
     <div className="space-y-6 pb-12">
       <PersonalDetailsSection />
@@ -21,6 +27,7 @@ export function ResumeForm() {
       <ExtrasSection />
       <StylingSection />
       <AiToolsSection />
+      {showCoverLetter && <CoverLetterSection />}
       <FinalizeSection />
     </div>
   );
