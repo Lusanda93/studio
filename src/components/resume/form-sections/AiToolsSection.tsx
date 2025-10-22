@@ -95,35 +95,57 @@ export function AiToolsSection() {
   
   const handleTailorResume = () => {
     startTransition(async () => {
-        if(!jobDescription) {
-            toast({ variant: "destructive", title: "Error", description: "Please paste a job description." });
-            return;
-        }
-        const currentResume = getValues();
-        const result = await getTailoredResume(currentResume, jobDescription);
-        if (result.success && result.data?.tailoredResume) {
-          try {
-            // The output from the flow is a JSON string which itself contains a JSON string.
-            const outerJson = JSON.parse(result.data.tailoredResume);
-            const tailoredData = typeof outerJson === 'string' ? JSON.parse(outerJson) : outerJson;
-            
-            if (tailoredData.summary) {
-              setValue("summary", tailoredData.summary, { shouldValidate: true });
-            }
-             if (tailoredData.skills) {
-              setValue("skills", tailoredData.skills, { shouldValidate: true });
-            }
-            if (Array.isArray(tailoredData.experience) && tailoredData.experience.length > 0) {
-              setValue("experience", tailoredData.experience, { shouldValidate: true });
-            }
-            toast({ title: "Success", description: "Your resume has been tailored to the job description." });
-          } catch(e) {
-             console.error("Failed to parse tailored resume JSON:", e, result.data.tailoredResume);
-             toast({ variant: "destructive", title: "AI Error", description: "The AI returned an unexpected format. Please try again." });
+      if (!jobDescription) {
+        toast({
+          variant: "destructive",
+          title: "Error",
+          description: "Please paste a job description.",
+        });
+        return;
+      }
+      const currentResume = getValues();
+      const result = await getTailoredResume(currentResume, jobDescription);
+      if (result.success && result.data?.tailoredResume) {
+        try {
+          const tailoredData = result.data.tailoredResume;
+
+          if (tailoredData.summary) {
+            setValue("summary", tailoredData.summary, {
+              shouldValidate: true,
+            });
           }
-        } else {
-            toast({ variant: "destructive", title: "AI Error", description: result.error });
+          if (tailoredData.skills) {
+            setValue("skills", tailoredData.skills, { shouldValidate: true });
+          }
+          if (Array.isArray(tailoredData.experience) && tailoredData.experience.length > 0) {
+            // Add a random ID to each experience item, since the AI doesn't provide one.
+            const newExperience = tailoredData.experience.map((exp: any) => ({
+                ...exp,
+                id: crypto.randomUUID()
+            }))
+            setValue("experience", newExperience, {
+              shouldValidate: true,
+            });
+          }
+          toast({
+            title: "Success",
+            description: "Your resume has been tailored to the job description.",
+          });
+        } catch (e) {
+          console.error("Failed to parse tailored resume JSON:", e, result.data.tailoredResume);
+          toast({
+            variant: "destructive",
+            title: "AI Error",
+            description: "The AI returned an unexpected format. Please try again.",
+          });
         }
+      } else {
+        toast({
+          variant: "destructive",
+          title: "AI Error",
+          description: result.error,
+        });
+      }
     });
   };
 

@@ -22,12 +22,12 @@ export type TailorResumeFromJobDescriptionInput = z.infer<
 
 const TailoredResumeSchema = z.object({
     summary: z.string().optional().describe("The new, tailored professional summary."),
-    experience: z.array(experienceSchema).optional().describe("An updated list of work experiences, tailored to the job."),
+    experience: z.array(experienceSchema.omit({id: true})).optional().describe("An updated list of work experiences, tailored to the job. Do not include id."),
     skills: z.string().optional().describe("A comma-separated list of skills, tailored to the job."),
 });
 
 const TailorResumeFromJobDescriptionOutputSchema = z.object({
-  tailoredResume: z.string().describe('The tailored resume content as a JSON string matching the structure of { summary: string, experience: Experience[], skills: string }'),
+  tailoredResume: TailoredResumeSchema.describe('An object containing the tailored resume content: summary, experience, and skills.'),
 });
 export type TailorResumeFromJobDescriptionOutput = z.infer<
   typeof TailorResumeFromJobDescriptionOutputSchema
@@ -54,11 +54,23 @@ const tailorResumeFromJobDescriptionPrompt = ai.definePrompt({
     Here is the job description:
     {{{jobDescription}}}
     
-    Your output MUST be a single JSON string. The JSON should contain one key: 'tailoredResume'. The value of this key should be another JSON string containing the tailored 'summary', 'experience', and 'skills' sections.
-    For the 'experience' array, each object must have 'id', 'company', 'role', 'startDate', 'endDate', and 'responsibilities' fields. Ensure the output is valid JSON.
+    Your output MUST be a single JSON object. The JSON should contain one key: 'tailoredResume'. The value of this key should be an object containing the tailored 'summary', 'experience', and 'skills' sections.
+    For the 'experience' array, each object must have 'company', 'role', 'startDate', 'endDate', and 'responsibilities' fields. Ensure the output is valid JSON. Do not include 'id' fields in the experience objects.
     Example output format:
     {
-      "tailoredResume": "{\\"summary\\":\\"A new summary...\\",\\"experience\\":[{\\"id\\":\\"...",...}],\\"skills\\":\\"skill1, skill2\\"}"
+      "tailoredResume": {
+        "summary": "A new summary...",
+        "experience": [
+          {
+            "company": "Example Corp",
+            "role": "Software Developer",
+            "startDate": "Jan 2020",
+            "endDate": "Present",
+            "responsibilities": "- Did a thing..."
+          }
+        ],
+        "skills": "skill1, skill2"
+      }
     }
     `,
 });

@@ -39,7 +39,7 @@ const coverLetterPrompt = ai.definePrompt({
   Job Description:
   {{{jobDescription}}}
   
-  Generate the cover letter text.`,
+  Generate only the cover letter text as a string for the 'coverLetter' field in the output JSON.`,
 });
 
 const generateCoverLetterFlow = ai.defineFlow(

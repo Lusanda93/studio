@@ -17,8 +17,8 @@ const AtsOptimizationInputSchema = z.object({
 export type AtsOptimizationInput = z.infer<typeof AtsOptimizationInputSchema>;
 
 const AtsOptimizationOutputSchema = z.object({
-  optimizedResume: z.string().describe('The resume content optimized for ATS.'),
-  suggestions: z.array(z.string()).describe('Suggestions for improving the resume for ATS.'),
+  optimizedResume: z.string().describe('The resume content optimized for ATS. This can be the original resume if no changes are needed.'),
+  suggestions: z.array(z.string()).describe('A list of actionable suggestions for improving the resume for ATS.'),
 });
 export type AtsOptimizationOutput = z.infer<typeof AtsOptimizationOutputSchema>;
 
@@ -30,13 +30,15 @@ const atsOptimizationPrompt = ai.definePrompt({
   name: 'atsOptimizationPrompt',
   input: {schema: AtsOptimizationInputSchema},
   output: {schema: AtsOptimizationOutputSchema},
-  prompt: `You are an expert resume optimization consultant. Your goal is to optimize the provided resume text for Applicant Tracking Systems (ATS) so that it is more likely to be recognized by the system and increase the chances of getting an interview. 
+  prompt: `You are an expert resume optimization consultant. Your goal is to analyze the provided resume text for Applicant Tracking Systems (ATS) and suggest improvements.
 
-  Analyze the resume text and provide an optimized version of the resume, along with a list of suggestions for improving the resume for ATS.
+  Analyze the following resume text and provide:
+  1. An optimized version of the resume. If no changes are necessary, you can return the original text.
+  2. A list of actionable suggestions for improving the resume for ATS.
 
   Resume Text: {{{resumeText}}}
 
-  Output the optimized resume and suggestions in the JSON format.`,
+  Your output must be in the specified JSON format.`,
 });
 
 const optimizeResumeForAtsFlow = ai.defineFlow(
