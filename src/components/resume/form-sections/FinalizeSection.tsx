@@ -20,17 +20,86 @@ import { Switch } from "@/components/ui/switch";
 import { useFormContext } from "react-hook-form";
 import { ResumeSchema } from "@/lib/types";
 import { useToast } from "@/hooks/use-toast";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export function FinalizeSection() {
   const form = useFormContext<ResumeSchema>();
   const { toast } = useToast();
 
-  const handleDownload = () => {
+  const handleDownload = async () => {
+    const format = form.getValues("meta.format");
+    const resumeContainer = document.getElementById('resume-preview-container');
+
+    if (!resumeContainer) {
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Could not find resume content to download.",
+      });
+      return;
+    }
+    
     toast({
-      title: "Download Started",
-      description: "Your resume download will begin shortly.",
+      title: "Generating your resume...",
+      description: `Your resume will be downloaded as a ${format} file.`,
     });
-    // In a real app, you would trigger a PDF/Word generation and download here.
+
+    if (format === 'PDF') {
+      try {
+        const canvas = await html2canvas(resumeContainer, {
+          scale: 3, // Higher scale for better quality
+          useCORS: true,
+        });
+
+        const imgData = canvas.toDataURL('image/png');
+        
+        // A4 dimensions in mm: 210 x 297
+        const pdf = new jsPDF({
+          orientation: 'portrait',
+          unit: 'mm',
+          format: 'a4',
+        });
+        
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / canvasHeight;
+        const width = pdfWidth;
+        const height = width / ratio;
+
+        let position = 0;
+        let pageHeightLeft = canvasHeight * pdfWidth / canvasWidth;
+
+        pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+        
+        // This is a simplified version. For multi-page PDFs, we would loop and add new pages.
+        // For now, it captures what's visible. A more robust solution for very long resumes
+        // would require more complex logic.
+
+        pdf.save("resume.pdf");
+
+        toast({
+          title: "Download Complete",
+          description: "Your resume has been downloaded as a PDF.",
+        });
+
+      } catch (error) {
+        console.error("Failed to generate PDF", error);
+        toast({
+          variant: "destructive",
+          title: "Download Failed",
+          description: "There was an error generating the PDF.",
+        });
+      }
+    } else {
+       toast({
+          variant: "destructive",
+          title: "Not Implemented",
+          description: "Word download is not yet supported.",
+        });
+    }
   };
 
   return (
@@ -65,9 +134,9 @@ export function FinalizeSection() {
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Word" />
+                      <RadioGroupItem value="Word" disabled />
                     </FormControl>
-                    <FormLabel className="font-normal">Word</FormLabel>
+                    <FormLabel className="font-normal text-muted-foreground">Word (soon)</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>

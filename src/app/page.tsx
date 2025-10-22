@@ -18,7 +18,7 @@ export default function Home() {
           </ScrollArea>
           <ScrollArea className="h-full md:col-span-1 lg:col-span-3 rounded-lg">
             <div className="flex justify-center items-start">
-              <div className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden my-4">
+              <div id="resume-preview-container" className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden my-4">
                 <ResumePreview />
               </div>
             </div>
