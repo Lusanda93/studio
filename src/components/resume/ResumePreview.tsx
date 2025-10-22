@@ -1,0 +1,146 @@
+"use client";
+
+import { useFormContext } from "react-hook-form";
+import { ResumeSchema } from "@/lib/types";
+import { cn } from "@/lib/utils";
+import { ScrollArea } from "../ui/scroll-area";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { Briefcase, GraduationCap, Mail, Phone, Star, User, Award, Lightbulb } from "lucide-react";
+import Image from "next/image";
+import { PlaceHolderImages } from "@/lib/placeholder-images";
+import { LinkedInIcon } from "../icons/BrandIcons";
+
+export function ResumePreview() {
+  const { watch } = useFormContext<ResumeSchema>();
+  const data = watch();
+
+  const { personal, summary, experience, education, skills, projects, certifications, styling } = data;
+
+  const templateStyles = {
+    Modern: {
+      header: "bg-primary text-primary-foreground",
+      sectionTitle: "border-b-2 border-primary text-primary font-bold",
+    },
+    Classic: {
+      header: "text-center border-b-2 pb-4",
+      sectionTitle: "text-lg font-bold border-b mb-2",
+    },
+    Creative: {
+      header: "bg-secondary text-secondary-foreground text-center rounded-t-lg",
+      sectionTitle: "text-secondary font-headline tracking-wider uppercase",
+    },
+    Minimalist: {
+      header: "py-4",
+      sectionTitle: "font-semibold tracking-widest text-muted-foreground text-sm uppercase",
+    },
+  };
+
+  const fontStyles = {
+    Inter: "font-body",
+    Serif: "font-serif",
+    Mono: "font-mono",
+  };
+
+  const selectedStyle = templateStyles[styling?.template] || templateStyles.Modern;
+  const selectedFont = fontStyles[styling?.font] || fontStyles.Inter;
+  
+  const profilePhoto = PlaceHolderImages.find(p => p.id === 'user-profile-placeholder');
+
+  const Section = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
+    <div className="mb-6">
+      <h3 className={cn("text-xl mb-3 flex items-center gap-2", selectedStyle.sectionTitle)} style={{ color: styling.template !== 'Modern' && styling.template !== 'Creative' ? styling.colorScheme : undefined}}>
+        {icon}
+        {title}
+      </h3>
+      <div className="text-sm text-foreground/80">{children}</div>
+    </div>
+  );
+
+  return (
+    <ScrollArea className="h-full">
+      <div className={cn("p-8 bg-card text-foreground", selectedFont)} style={{'--primary-color': styling?.colorScheme || '#5E548E'} as React.CSSProperties}>
+        <header className={cn("p-6 -mx-8 -mt-8 mb-8 flex justify-between items-center", selectedStyle.header)} style={{ backgroundColor: (styling.template === 'Modern' || styling.template === 'Creative') ? styling.colorScheme : undefined }}>
+           <div className="flex-1">
+             <h1 className="text-4xl font-bold font-headline">{personal?.fullName || "Your Name"}</h1>
+             <div className="flex items-center gap-4 mt-2 text-sm">
+                {personal?.email && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4" /> {personal.email}</span>}
+                {personal?.phone && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {personal.phone}</span>}
+                {personal?.linkedin && <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:underline"><LinkedInIcon/> LinkedIn</a>}
+             </div>
+           </div>
+           {styling?.includePhoto && profilePhoto && (
+             <Avatar className="h-24 w-24">
+               <Image src={profilePhoto.imageUrl} alt="Profile Photo" width={96} height={96} data-ai-hint={profilePhoto.imageHint}/>
+               <AvatarFallback>{personal?.fullName?.charAt(0) || 'U'}</AvatarFallback>
+             </Avatar>
+           )}
+        </header>
+        
+        <main>
+          {summary && (
+            <Section title="Professional Summary" icon={<User className="w-5 h-5" />}>
+              <p className="whitespace-pre-wrap">{summary}</p>
+            </Section>
+          )}
+
+          {experience && experience.length > 0 && (
+            <Section title="Work Experience" icon={<Briefcase className="w-5 h-5" />}>
+              {experience.map((exp) => (
+                <div key={exp.id} className="mb-4">
+                  <div className="flex justify-between items-baseline">
+                    <h4 className="font-bold">{exp.role || "Role"}</h4>
+                    <p className="text-xs text-muted-foreground">{exp.startDate || "Start Date"} - {exp.endDate || "Present"}</p>
+                  </div>
+                  <p className="text-sm italic">{exp.company || "Company Name"}</p>
+                  <p className="mt-1 whitespace-pre-wrap text-foreground/70">{exp.responsibilities || "Responsibilities"}</p>
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {education && education.length > 0 && (
+            <Section title="Education" icon={<GraduationCap className="w-5 h-5" />}>
+              {education.map((edu) => (
+                <div key={edu.id} className="mb-2 flex justify-between">
+                  <div>
+                    <h4 className="font-bold">{edu.degree || "Degree"}</h4>
+                    <p className="text-sm italic">{edu.institution || "Institution"}</p>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{edu.graduationYear || "Year"}</p>
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {skills && (
+            <Section title="Skills" icon={<Star className="w-5 h-5" />}>
+              <p className="whitespace-pre-wrap">{skills}</p>
+            </Section>
+          )}
+
+          {projects && projects.length > 0 && (
+             <Section title="Projects" icon={<Lightbulb className="w-5 h-5" />}>
+              {projects.map((item) => (
+                <div key={item.id} className="mb-2">
+                  <h4 className="font-bold">{item.title || "Project Title"}</h4>
+                  <p className="text-sm whitespace-pre-wrap text-foreground/70">{item.description || "Project description."}</p>
+                </div>
+              ))}
+            </Section>
+          )}
+
+          {certifications && certifications.length > 0 && (
+            <Section title="Certifications & Awards" icon={<Award className="w-5 h-5" />}>
+              {certifications.map((item) => (
+                <div key={item.id} className="mb-2">
+                   <h4 className="font-bold">{item.title || "Certification Title"}</h4>
+                   <p className="text-sm whitespace-pre-wrap text-foreground/70">{item.description || "Certification description."}</p>
+                </div>
+              ))}
+            </Section>
+          )}
+        </main>
+      </div>
+    </ScrollArea>
+  );
+}
