@@ -7,7 +7,6 @@ import { EducationSection } from "./form-sections/EducationSection";
 import { SkillsSection } from "./form-sections/SkillsSection";
 import { ExtrasSection } from "./form-sections/ExtrasSection";
 import { StylingSection } from "./form-sections/StylingSection";
-import { AiToolsSection } from "./form-sections/AiToolsSection";
 import { FinalizeSection } from "./form-sections/FinalizeSection";
 import { CoverLetterSection } from "./form-sections/CoverLetterSection";
 import { useFormContext } from "react-hook-form";
@@ -26,7 +25,6 @@ export function ResumeForm() {
       <SkillsSection />
       <ExtrasSection />
       <StylingSection />
-      <AiToolsSection />
       {showCoverLetter && <CoverLetterSection />}
       <FinalizeSection />
     </div>
