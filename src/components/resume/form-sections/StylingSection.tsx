@@ -177,35 +177,35 @@ export function StylingSection() {
           />
           <div
             className={cn(
-              "transition-all duration-300 ease-in-out overflow-hidden",
-              includePhoto
-                ? "max-h-40 opacity-100"
-                : "max-h-0 opacity-0"
+              "grid transition-all duration-300 ease-in-out",
+              includePhoto ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
             )}
           >
-             <div className="p-4 border rounded-lg space-y-4">
-                <FormLabel>Profile Photo</FormLabel>
-                <div className="flex gap-4">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    className="w-full"
-                    onClick={() => fileInputRef.current?.click()}
-                  >
-                    <Upload className="mr-2 h-4 w-4" /> Upload Photo
-                  </Button>
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={handleFileChange}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                  <Button type="button" variant="outline" className="w-full" onClick={() => setCameraDialogOpen(true)}>
-                    <Camera className="mr-2 h-4 w-4" /> Take Picture
-                  </Button>
-                </div>
-             </div>
+            <div className="overflow-hidden">
+              <div className="p-4 border rounded-lg space-y-4 mt-4">
+                  <FormLabel>Profile Photo</FormLabel>
+                  <div className="flex gap-4">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      className="w-full"
+                      onClick={() => fileInputRef.current?.click()}
+                    >
+                      <Upload className="mr-2 h-4 w-4" /> Upload Photo
+                    </Button>
+                    <input
+                      type="file"
+                      ref={fileInputRef}
+                      onChange={handleFileChange}
+                      className="hidden"
+                      accept="image/*"
+                    />
+                    <Button type="button" variant="outline" className="w-full" onClick={() => setCameraDialogOpen(true)}>
+                      <Camera className="mr-2 h-4 w-4" /> Take Picture
+                    </Button>
+                  </div>
+              </div>
+            </div>
           </div>
         </CardContent>
       </Card>
