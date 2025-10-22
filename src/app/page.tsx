@@ -1,3 +1,4 @@
+
 import { Header } from "@/components/Header";
 import { ResumeForm } from "@/components/resume/ResumeForm";
 import { ResumeFormProvider } from "@/components/resume/ResumeFormProvider";
@@ -15,15 +16,13 @@ export default function Home() {
               <ResumeForm />
             </div>
           </ScrollArea>
-          <div className="h-full md:col-span-1 lg:col-span-3">
-             <ScrollArea className="h-full rounded-lg">
-                <div className="flex justify-center items-start h-full">
-                <div className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden">
-                    <ResumePreview />
-                </div>
-                </div>
-            </ScrollArea>
-          </div>
+          <ScrollArea className="h-full md:col-span-1 lg:col-span-3 rounded-lg">
+            <div className="flex justify-center items-start">
+              <div className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden my-4">
+                <ResumePreview />
+              </div>
+            </div>
+          </ScrollArea>
         </main>
       </div>
     </ResumeFormProvider>
