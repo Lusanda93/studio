@@ -32,9 +32,12 @@ export async function getTailoredResume(
   jobDescription: string
 ) {
   try {
-    const resumeString = Object.entries(resume)
-      .map(([key, value]) => `${key}: ${JSON.stringify(value)}`)
-      .join("\n");
+    // Convert only the relevant parts of the resume to a string for the AI
+    const resumeString = `
+      Current Summary: ${resume.summary}
+      Work Experience: ${resume.experience.map(e => `${e.role} at ${e.company}`).join(', ')}
+      Skills: ${resume.skills}
+    `;
 
     const result = await tailorResumeFromJobDescription({
       resume: resumeString,

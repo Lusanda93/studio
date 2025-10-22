@@ -100,11 +100,25 @@ export function AiToolsSection() {
         }
         const currentResume = getValues();
         const result = await getTailoredResume(currentResume, jobDescription);
-        if (result.success && result.data) {
-            // This is a simplified approach. A real implementation would parse the tailored resume
-            // and update individual fields. For now, we'll update the summary.
+        if (result.success && result.data?.tailoredResume) {
+          try {
+            const tailoredData = JSON.parse(result.data.tailoredResume);
+            if (tailoredData.summary) {
+              setValue("summary", tailoredData.summary, { shouldValidate: true });
+            }
+             if (tailoredData.skills) {
+              setValue("skills", tailoredData.skills, { shouldValidate: true });
+            }
+            if (Array.isArray(tailoredData.experience) && tailoredData.experience.length > 0) {
+              setValue("experience", tailoredData.experience, { shouldValidate: true });
+            }
+            toast({ title: "Success", description: "Your resume has been tailored to the job description." });
+          } catch(e) {
+            console.error("Failed to parse tailored resume JSON:", e);
+            // Fallback for non-JSON response
             setValue("summary", result.data.tailoredResume, { shouldValidate: true });
-            toast({ title: "Success", description: "Resume summary has been tailored to the job description." });
+            toast({ title: "Success", description: "Resume summary has been updated." });
+          }
         } else {
             toast({ variant: "destructive", title: "AI Error", description: result.error });
         }
@@ -132,7 +146,7 @@ export function AiToolsSection() {
                   Get AI-powered suggestions to improve your professional summary.
                 </p>
                 <Button onClick={handleEnhanceContent} disabled={isPending}>
-                  {isPending ? "Generating..." : "Suggest Improvements"}
+                  {isPending && !enhancementResult ? "Generating..." : "Suggest Improvements"}
                 </Button>
                 {isPending && !enhancementResult && <Skeleton className="h-20 w-full" />}
                 {enhancementResult && (
@@ -155,7 +169,7 @@ export function AiToolsSection() {
                   Optimize your resume to pass through Applicant Tracking Systems (ATS).
                 </p>
                 <Button onClick={handleOptimizeAts} disabled={isPending}>
-                  {isPending ? "Optimizing..." : "Optimize for ATS"}
+                  {isPending && !atsResult ? "Optimizing..." : "Optimize for ATS"}
                 </Button>
                 {isPending && !atsResult && <Skeleton className="h-32 w-full" />}
                 {atsResult && (
