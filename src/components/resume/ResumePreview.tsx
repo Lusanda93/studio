@@ -20,22 +20,27 @@ export function ResumePreview() {
   const templateStyles = {
     Modern: {
       header: "bg-primary text-primary-foreground",
-      sectionTitle: "border-b-2 border-primary text-primary font-bold",
+      sectionTitleContainer: "pb-2 mb-3 border-b-2 border-primary",
+      sectionTitle: "text-primary font-bold",
     },
     Classic: {
       header: "text-center border-b-2 pb-4",
-      sectionTitle: "text-lg font-bold border-b mb-2",
+      sectionTitleContainer: "pb-1 mb-2 border-b",
+      sectionTitle: "text-lg font-bold",
     },
     Creative: {
       header: "bg-secondary text-secondary-foreground text-center rounded-t-lg",
+      sectionTitleContainer: "pb-2 mb-3",
       sectionTitle: "text-secondary font-headline tracking-wider uppercase",
     },
     Minimalist: {
       header: "py-4",
+      sectionTitleContainer: "pb-2 mb-3",
       sectionTitle: "font-semibold tracking-widest text-muted-foreground text-sm uppercase",
     },
     Professional: {
         header: 'border-b-4 border-primary pb-4',
+        sectionTitleContainer: "pb-2 mb-3",
         sectionTitle: 'text-primary font-bold text-lg tracking-wide',
     },
   };
@@ -56,10 +61,12 @@ export function ResumePreview() {
 
   const Section = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
     <div className="mb-6">
-      <h3 className={cn("text-xl mb-3 flex items-center gap-2", selectedStyle.sectionTitle)} style={{ color: (styling.template !== 'Modern' && styling.template !== 'Creative') ? styling.colorScheme : undefined}}>
-        {icon}
-        {title}
-      </h3>
+      <div className={cn("flex items-center gap-2", selectedStyle.sectionTitleContainer)} style={{ borderColor: (styling.template !== 'Modern' && styling.template !== 'Creative') ? styling.colorScheme : undefined}}>
+        <h3 className={cn("text-xl", selectedStyle.sectionTitle)} style={{ color: (styling.template !== 'Modern' && styling.template !== 'Creative') ? styling.colorScheme : undefined}}>
+          {icon}
+          {title}
+        </h3>
+      </div>
       <div className="text-sm text-foreground/80">{children}</div>
     </div>
   );
