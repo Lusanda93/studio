@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { ResumeSchema } from "@/lib/types";
-import { Brush, Camera, Upload } from "lucide-react";
+import { Brush, Camera, Palette, Upload } from "lucide-react";
 import { useFormContext } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import React, { useRef, useState } from "react";
@@ -40,7 +40,6 @@ const colorSchemes = [
   { name: "Pink", value: "#DB2777" },
   { name: "Red", value: "#DC2626" },
   { name: "Black", value: "#000000" },
-  { name: "White", value: "#FFFFFF" },
 ];
 
 export function StylingSection() {
@@ -145,7 +144,7 @@ export function StylingSection() {
               <FormItem>
                 <FormLabel>Color Scheme</FormLabel>
                 <FormControl>
-                  <div className="flex flex-wrap gap-2 pt-2">
+                  <div className="flex flex-wrap items-center gap-2 pt-2">
                     {colorSchemes.map((color) => (
                       <button
                         key={color.value}
@@ -154,13 +153,22 @@ export function StylingSection() {
                         className={cn(`h-8 w-8 rounded-full border-2`,
                           field.value === color.value
                             ? "border-ring ring-2 ring-ring"
-                            : "border-transparent",
-                          color.value === '#FFFFFF' && 'border-muted'
+                            : "border-transparent"
                         )}
                         style={{ backgroundColor: color.value }}
                         aria-label={`Select ${color.name} color`}
                       />
                     ))}
+                    <div className="relative h-8 w-8 rounded-full border-2 border-muted overflow-hidden flex items-center justify-center">
+                        <Palette className="h-4 w-4 text-muted-foreground" />
+                        <input
+                            type="color"
+                            value={field.value}
+                            onChange={(e) => field.onChange(e.target.value)}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            aria-label="Custom color picker"
+                        />
+                    </div>
                   </div>
                 </FormControl>
               </FormItem>
