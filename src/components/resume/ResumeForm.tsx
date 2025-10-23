@@ -1,3 +1,4 @@
+
 "use client";
 
 import { PersonalDetailsSection } from "./form-sections/PersonalDetailsSection";
@@ -11,6 +12,7 @@ import { FinalizeSection } from "./form-sections/FinalizeSection";
 import { CoverLetterSection } from "./form-sections/CoverLetterSection";
 import { useFormContext } from "react-hook-form";
 import { ResumeSchema } from "@/lib/types";
+import { ReferencesSection } from "./form-sections/ReferencesSection";
 
 export function ResumeForm() {
   const { watch } = useFormContext<ResumeSchema>();
@@ -24,6 +26,7 @@ export function ResumeForm() {
       <EducationSection />
       <SkillsSection />
       <ExtrasSection />
+      <ReferencesSection />
       <StylingSection />
       {showCoverLetter && <CoverLetterSection />}
       <FinalizeSection />

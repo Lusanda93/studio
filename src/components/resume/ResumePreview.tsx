@@ -6,7 +6,7 @@ import { ResumeSchema } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "../ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
-import { Briefcase, GraduationCap, Mail, Phone, Star, User, Award, Lightbulb } from "lucide-react";
+import { Briefcase, GraduationCap, Mail, Phone, Star, User, Award, Lightbulb, Contact } from "lucide-react";
 import Image from "next/image";
 import { PlaceHolderImages } from "@/lib/placeholder-images";
 import { LinkedInIcon } from "../icons/BrandIcons";
@@ -15,7 +15,7 @@ export function ResumePreview() {
   const { watch } = useFormContext<ResumeSchema>();
   const data = watch();
 
-  const { personal, summary, experience, education, skills, projects, certifications, styling } = data;
+  const { personal, summary, experience, education, skills, projects, certifications, references, styling } = data;
 
   const templateStyles = {
     Modern: {
@@ -34,12 +34,19 @@ export function ResumePreview() {
       header: "py-4",
       sectionTitle: "font-semibold tracking-widest text-muted-foreground text-sm uppercase",
     },
+    Professional: {
+        header: 'border-b-4 border-primary pb-4',
+        sectionTitle: 'text-primary font-bold text-lg tracking-wide',
+    },
   };
 
   const fontStyles = {
     Inter: "font-body",
     Serif: "font-serif",
     Mono: "font-mono",
+    Roboto: "font-['Roboto',sans-serif]",
+    Lato: "font-['Lato',sans-serif]",
+    Raleway: "font-['Raleway',sans-serif]",
   };
 
   const selectedStyle = templateStyles[styling?.template] || templateStyles.Modern;
@@ -49,7 +56,7 @@ export function ResumePreview() {
 
   const Section = ({ title, icon, children }: { title: string; icon: React.ReactNode; children: React.ReactNode }) => (
     <div className="mb-6">
-      <h3 className={cn("text-xl mb-3 flex items-center gap-2", selectedStyle.sectionTitle)} style={{ color: styling.template !== 'Modern' && styling.template !== 'Creative' ? styling.colorScheme : undefined}}>
+      <h3 className={cn("text-xl mb-3 flex items-center gap-2", selectedStyle.sectionTitle)} style={{ color: (styling.template !== 'Modern' && styling.template !== 'Creative') ? styling.colorScheme : undefined}}>
         {icon}
         {title}
       </h3>
@@ -60,10 +67,10 @@ export function ResumePreview() {
   return (
     <ScrollArea className="h-full">
       <div className={cn("p-8 bg-card text-foreground", selectedFont)} style={{'--primary-color': styling?.colorScheme || '#5E548E'} as React.CSSProperties}>
-        <header className={cn("p-6 -mx-8 -mt-8 mb-8 flex justify-between items-center", selectedStyle.header)} style={{ backgroundColor: (styling.template === 'Modern' || styling.template === 'Creative') ? styling.colorScheme : undefined }}>
+        <header className={cn("p-6 -mx-8 -mt-8 mb-8 flex justify-between items-center", selectedStyle.header)} style={{ backgroundColor: (styling.template === 'Modern' || styling.template === 'Creative') ? styling.colorScheme : undefined, borderColor: (styling.template === 'Professional' || styling.template === 'Classic') ? styling.colorScheme : undefined}}>
            <div className="flex-1">
              <h1 className="text-4xl font-bold font-headline">{personal?.fullName || "Your Name"}</h1>
-             <div className="flex items-center gap-4 mt-2 text-sm">
+             <div className="flex items-center gap-4 mt-2 text-sm flex-wrap">
                 {personal?.email && <span className="flex items-center gap-1.5"><Mail className="w-4 h-4" /> {personal.email}</span>}
                 {personal?.phone && <span className="flex items-center gap-1.5"><Phone className="w-4 h-4" /> {personal.phone}</span>}
                 {personal?.linkedin && <a href={personal.linkedin} target="_blank" rel="noopener noreferrer" className="flex items-center gap-1.5 hover:underline"><LinkedInIcon/> LinkedIn</a>}
@@ -138,6 +145,20 @@ export function ResumePreview() {
                    <p className="text-sm whitespace-pre-wrap text-foreground/70">{item.description || "Certification description."}</p>
                 </div>
               ))}
+            </Section>
+          )}
+
+          {references && references.length > 0 && (
+            <Section title="References" icon={<Contact className="w-5 h-5" />}>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {references.map((ref) => (
+                  <div key={ref.id} className="mb-2">
+                    <h4 className="font-bold">{ref.name || "Reference Name"}</h4>
+                    <p className="text-sm italic">{ref.relationship || "Relationship"}</p>
+                    <p className="text-sm text-foreground/70">{ref.contact || "Contact Info"}</p>
+                  </div>
+                ))}
+              </div>
             </Section>
           )}
         </main>

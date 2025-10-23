@@ -23,6 +23,13 @@ export const extrasSchema = z.object({
   description: z.string().min(1, "Description is required"),
 });
 
+export const referenceSchema = z.object({
+  id: z.string().default(() => crypto.randomUUID()),
+  name: z.string().min(1, "Reference name is required"),
+  contact: z.string().min(1, "Contact information is required"),
+  relationship: z.string().min(1, "Relationship is required"),
+});
+
 
 export const resumeSchema = z.object({
   personal: z.object({
@@ -36,17 +43,18 @@ export const resumeSchema = z.object({
   experience: z.array(experienceSchema),
   education: z.array(educationSchema),
   skills: z.string().min(1, "Please list at least one skill"),
-  certifications: z.array(extrasSchema),
   projects: z.array(extrasSchema),
+  certifications: z.array(extrasSchema),
+  references: z.array(referenceSchema),
   coverLetter: z.string().optional(),
   styling: z.object({
-    template: z.enum(["Classic", "Modern", "Creative", "Minimalist"]).default("Modern"),
-    font: z.enum(["Inter", "Serif", "Mono"]).default("Inter"),
+    template: z.enum(["Classic", "Modern", "Creative", "Minimalist", "Professional"]).default("Modern"),
+    font: z.enum(["Inter", "Serif", "Mono", "Roboto", "Lato", "Raleway"]).default("Inter"),
     colorScheme: z.string().default("#5E548E"),
     includePhoto: z.boolean().default(false),
   }),
   meta: z.object({
-    format: z.enum(["PDF", "Word"]).default("PDF"),
+    format: z.enum(["PDF", "DOC", "HTML"]).default("PDF"),
     save: z.boolean().default(true),
     generateCoverLetter: z.boolean().default(false),
   })

@@ -1,3 +1,4 @@
+
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -8,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Check, Download, FileText, Save } from "lucide-react";
+import { Check, Download } from "lucide-react";
 import {
   FormControl,
   FormField,
@@ -69,15 +70,8 @@ export function FinalizeSection() {
         const width = pdfWidth;
         const height = width / ratio;
 
-        let position = 0;
-        let pageHeightLeft = canvasHeight * pdfWidth / canvasWidth;
-
         pdf.addImage(imgData, 'PNG', 0, 0, width, height);
         
-        // This is a simplified version. For multi-page PDFs, we would loop and add new pages.
-        // For now, it captures what's visible. A more robust solution for very long resumes
-        // would require more complex logic.
-
         pdf.save("resume.pdf");
 
         toast({
@@ -97,7 +91,7 @@ export function FinalizeSection() {
        toast({
           variant: "destructive",
           title: "Not Implemented",
-          description: "Word download is not yet supported.",
+          description: `${format} download is not yet supported.`,
         });
     }
   };
@@ -134,9 +128,15 @@ export function FinalizeSection() {
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="Word" disabled />
+                      <RadioGroupItem value="DOC" disabled />
                     </FormControl>
-                    <FormLabel className="font-normal text-muted-foreground">Word (soon)</FormLabel>
+                    <FormLabel className="font-normal text-muted-foreground">DOC (soon)</FormLabel>
+                  </FormItem>
+                   <FormItem className="flex items-center space-x-3 space-y-0">
+                    <FormControl>
+                      <RadioGroupItem value="HTML" disabled />
+                    </FormControl>
+                    <FormLabel className="font-normal text-muted-foreground">HTML (soon)</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>

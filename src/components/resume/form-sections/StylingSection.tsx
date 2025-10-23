@@ -37,6 +37,10 @@ const colorSchemes = [
   { name: "Green", value: "#4F772D" },
   { name: "Gray", value: "#52525B" },
   { name: "Orange", value: "#EA580C" },
+  { name: "Pink", value: "#DB2777" },
+  { name: "Red", value: "#DC2626" },
+  { name: "Black", value: "#000000" },
+  { name: "White", value: "#FFFFFF" },
 ];
 
 export function StylingSection() {
@@ -85,9 +89,9 @@ export function StylingSection() {
                   <RadioGroup
                     onValueChange={field.onChange}
                     defaultValue={field.value}
-                    className="grid grid-cols-2 gap-4 pt-2"
+                    className="grid grid-cols-2 lg:grid-cols-3 gap-4 pt-2"
                   >
-                    {["Classic", "Modern", "Creative", "Minimalist"].map(
+                    {["Classic", "Modern", "Creative", "Minimalist", "Professional"].map(
                       (template) => (
                         <FormItem
                           key={template}
@@ -126,6 +130,9 @@ export function StylingSection() {
                     <SelectItem value="Inter">Inter (Sans-serif)</SelectItem>
                     <SelectItem value="Serif">Default Serif</SelectItem>
                     <SelectItem value="Mono">Default Monospace</SelectItem>
+                    <SelectItem value="Roboto">Roboto</SelectItem>
+                    <SelectItem value="Lato">Lato</SelectItem>
+                    <SelectItem value="Raleway">Raleway</SelectItem>
                   </SelectContent>
                 </Select>
               </FormItem>
@@ -144,11 +151,12 @@ export function StylingSection() {
                         key={color.value}
                         type="button"
                         onClick={() => field.onChange(color.value)}
-                        className={`h-8 w-8 rounded-full border-2 ${
+                        className={cn(`h-8 w-8 rounded-full border-2`,
                           field.value === color.value
                             ? "border-ring ring-2 ring-ring"
-                            : "border-transparent"
-                        }`}
+                            : "border-transparent",
+                          color.value === '#FFFFFF' && 'border-muted'
+                        )}
                         style={{ backgroundColor: color.value }}
                         aria-label={`Select ${color.name} color`}
                       />
@@ -182,7 +190,7 @@ export function StylingSection() {
             )}
           >
             <div className="overflow-hidden">
-              <div className="p-4 border rounded-lg space-y-4 mt-4">
+              <div className="p-4 border rounded-lg space-y-4">
                   <FormLabel>Profile Photo</FormLabel>
                   <div className="flex gap-4">
                     <Button
