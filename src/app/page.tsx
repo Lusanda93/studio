@@ -16,13 +16,15 @@ export default function Home() {
               <ResumeForm />
             </div>
           </ScrollArea>
-          <ScrollArea className="h-full md:col-span-1 lg:col-span-3 rounded-lg">
-            <div className="flex justify-center items-start">
-              <div id="resume-preview-container" className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden my-4">
-                <ResumePreview />
+          <div className="h-full md:col-span-1 lg:col-span-3 rounded-lg overflow-hidden">
+            <ScrollArea className="h-full">
+              <div className="flex justify-center items-start p-4">
+                <div id="resume-preview-container" className="w-full max-w-[210mm] min-h-[297mm] bg-card shadow-lg rounded-lg overflow-hidden">
+                  <ResumePreview />
+                </div>
               </div>
-            </div>
-          </ScrollArea>
+            </ScrollArea>
+          </div>
         </main>
       </div>
     </ResumeFormProvider>

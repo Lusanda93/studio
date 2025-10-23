@@ -28,6 +28,47 @@ export function FinalizeSection() {
   const form = useFormContext<ResumeSchema>();
   const { toast } = useToast();
 
+  const getResumeHtml = () => {
+    const resumeContainer = document.getElementById('resume-preview-container');
+    if (!resumeContainer) return null;
+
+    // Clone the node to avoid modifying the original
+    const clone = resumeContainer.cloneNode(true) as HTMLElement;
+    
+    // Get all stylesheets
+    const sheets = Array.from(document.styleSheets)
+      .map(sheet => {
+        try {
+          return Array.from(sheet.cssRules)
+            .map(rule => rule.cssText)
+            .join('');
+        } catch (e) {
+          console.warn("Can't read cross-origin stylesheet", e);
+          return null;
+        }
+      })
+      .filter(Boolean)
+      .join('\n');
+
+    const html = `
+      <!DOCTYPE html>
+      <html lang="en">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Resume</title>
+        <style>${sheets}</style>
+      </head>
+      <body>
+        <div style="width: 210mm; margin: auto;">
+         ${clone.innerHTML}
+        </div>
+      </body>
+      </html>
+    `;
+    return html;
+  };
+
   const handleDownload = async () => {
     const format = form.getValues("meta.format");
     const resumeContainer = document.getElementById('resume-preview-container');
@@ -46,16 +87,15 @@ export function FinalizeSection() {
       description: `Your resume will be downloaded as a ${format} file.`,
     });
 
-    if (format === 'PDF') {
-      try {
+    try {
+      if (format === 'PDF') {
         const canvas = await html2canvas(resumeContainer, {
-          scale: 3, // Higher scale for better quality
+          scale: 3, 
           useCORS: true,
         });
 
         const imgData = canvas.toDataURL('image/png');
         
-        // A4 dimensions in mm: 210 x 297
         const pdf = new jsPDF({
           orientation: 'portrait',
           unit: 'mm',
@@ -67,32 +107,51 @@ export function FinalizeSection() {
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         const ratio = canvasWidth / canvasHeight;
-        const width = pdfWidth;
-        const height = width / ratio;
+        
+        let width = pdfWidth;
+        let height = pdfHeight;
+        let imgHeight = width / ratio;
 
-        pdf.addImage(imgData, 'PNG', 0, 0, width, height);
+        if(imgHeight > height) {
+          imgHeight = height;
+          width = imgHeight * ratio;
+        }
+
+        const x = (pdfWidth - width) / 2;
+        const y = 0;
+
+
+        pdf.addImage(imgData, 'PNG', x, y, width, imgHeight);
         
         pdf.save("resume.pdf");
 
-        toast({
-          title: "Download Complete",
-          description: "Your resume has been downloaded as a PDF.",
-        });
-
-      } catch (error) {
-        console.error("Failed to generate PDF", error);
-        toast({
-          variant: "destructive",
-          title: "Download Failed",
-          description: "There was an error generating the PDF.",
-        });
+      } else if (format === 'HTML' || format === 'DOC') {
+        const htmlContent = getResumeHtml();
+        if (htmlContent) {
+          const blob = new Blob([htmlContent], { type: format === 'DOC' ? 'application/msword' : 'text/html' });
+          const link = document.createElement("a");
+          link.href = URL.createObjectURL(blob);
+          link.download = `resume.${format.toLowerCase()}`;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+        } else {
+          throw new Error("Could not generate HTML content.");
+        }
       }
-    } else {
-       toast({
-          variant: "destructive",
-          title: "Not Implemented",
-          description: `${format} download is not yet supported.`,
-        });
+
+      toast({
+        title: "Download Complete",
+        description: `Your resume has been downloaded as a ${format} file.`,
+      });
+
+    } catch (error) {
+      console.error("Failed to generate file", error);
+      toast({
+        variant: "destructive",
+        title: "Download Failed",
+        description: `There was an error generating the ${format} file.`,
+      });
     }
   };
 
@@ -128,15 +187,15 @@ export function FinalizeSection() {
                   </FormItem>
                   <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="DOC" disabled />
+                      <RadioGroupItem value="DOC" />
                     </FormControl>
-                    <FormLabel className="font-normal text-muted-foreground">DOC (soon)</FormLabel>
+                    <FormLabel className="font-normal">DOC</FormLabel>
                   </FormItem>
                    <FormItem className="flex items-center space-x-3 space-y-0">
                     <FormControl>
-                      <RadioGroupItem value="HTML" disabled />
+                      <RadioGroupItem value="HTML" />
                     </FormControl>
-                    <FormLabel className="font-normal text-muted-foreground">HTML (soon)</FormLabel>
+                    <FormLabel className="font-normal">HTML</FormLabel>
                   </FormItem>
                 </RadioGroup>
               </FormControl>
